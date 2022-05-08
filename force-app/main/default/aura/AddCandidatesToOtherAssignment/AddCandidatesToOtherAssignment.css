@@ -1,0 +1,10 @@
+.THIS .margin38
+{
+    margin-top: 05%;
+}
+.THIS.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}

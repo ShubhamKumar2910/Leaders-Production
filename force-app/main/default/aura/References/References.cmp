@@ -1,0 +1,99 @@
+<aura:component controller="ReferenceHelper" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="displayReference" type="Boolean" />
+    <aura:attribute name="recordId" type="String"  />
+    <aura:attribute name="Reference_Values" type= "Reference__c[]" default=""/>
+    <aura:attribute name="deleteList" type= "String[]" />
+    <aura:attribute name="REF_Created" type="String" />
+    <aura:attribute name="ButtonClassForREF" type="String" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:attribute name="displayAgenda" type="Boolean" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    <aura:attribute name="checkSpinner" type="boolean" default="false"/>
+    <aura:attribute name="tabId" type="String" default="2"/>
+    <aura:attribute name="Is_English" type="Boolean" />
+    
+    <aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if>
+    
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>   
+    
+    <aura:if isTrue="{!v.displayReference}">
+        
+        <section aura:id="Modalbox" role="dialog" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{!c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate "><b><span class="blueText">REFERENCES</span></b></h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div style="">
+                        <lightning:tabset selectedTabId="{!v.tabId}" aura:id="tabs" >
+                            <div style="margin-left:2%">
+                                <lightning:tab label="English" id="1">
+                                    <aura:iteration items="{!v.Reference_Values}" var="al" indexVar="i" >
+                                        <div class="slds-grid slds-gutters">
+                                            
+                                            <div class="slds-col slds-medium-size_2-of-4">
+                                                <lightning:input type="text" value="{!al.Reference_Ques__c}"  disabled="" />
+                                            </div>
+                                            
+                                            <div class="slds-col slds-medium-size_1-of-4">
+                                                <lightning:input type="text" value="{!al.Seq_Number__c}"  disabled="" style="width: 14%;"/>
+                                            </div>
+                                            <div class="slds-col slds-medium-size_1-of-4" style="margin-top: 2%;">
+                                                <lightning:button  variant="brand" label="Remove" title="{!i}" onclick="{!c.remove}" value="{!al.Id}"></lightning:button> 
+                                            </div>
+                                        </div>
+                                    </aura:iteration>
+                                </lightning:tab>
+                                
+                                <lightning:tab label="2nd Language" id="2">
+                                
+                                    <aura:iteration items="{!v.Reference_Values}" var="al" indexVar="i" >
+                                        <div class="slds-grid slds-gutters">
+                                            
+                                            <div class="slds-col slds-medium-size_2-of-4">
+                                                <lightning:input type="text" value="{!al.Reference_Fr_Ques__c}"  disabled="" />
+                                            </div>
+                                            
+                                            <div class="slds-col slds-medium-size_1-of-4">
+                                                <lightning:input type="text" value="{!al.Seq_Number__c}"  disabled="" style="width: 14%;"/>
+                                            </div>
+                                            <div class="slds-col slds-medium-size_1-of-4" style="margin-top: 2%;">
+                                                <lightning:button  variant="brand" label="Remove" title="{!i}" onclick="{!c.remove}" value="{!al.Id}"></lightning:button> 
+                                            </div>
+                                        </div>
+                                    </aura:iteration>
+                           
+                                </lightning:tab>
+                            </div>
+                        </lightning:tabset> 
+                    </div>
+                    <!--###### MODAL BOX FOOTER Part Start ######-->
+                    <footer class="slds-modal__footer">
+                         <div class="slds-col slds-size_2-of-3">
+                        <lightning:button variant="brand" label="Add Row" onclick="{!c.add}"/>
+                        
+                        <lightning:button variant="brand" label="Save" name="Save" title="Save" onclick="{!c.save}"/>
+                        <lightning:button variant="neutral" label="Save And Close" title="Close" onclick="{!c.saveAndcloseModel }"/>
+                             
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </section>
+    </aura:if>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    <!--###### MODAL BOX Part END Here ######-->
+    
+</aura:component>

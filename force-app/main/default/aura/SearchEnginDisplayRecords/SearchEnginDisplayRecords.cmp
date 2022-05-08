@@ -1,0 +1,123 @@
+<aura:component controller="PickListHandler" implements="force:appHostable,flexipage:availableForAllPageTypes,lightning:isUrlAddressable" access="global">
+    <aura:attribute name="obj" type="SObject"/>
+    <aura:attribute name="fieldName" type="string"/>
+    <aura:attribute name="fieldValue" type="string"/>
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="checkSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="recordId" type="string" default="{!v.obj.Id}"/>
+    <aura:attribute name="AssDetails" type="Application__c" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <lightning:navigation aura:id="navService"/>
+    <!--aura:if isTrue="{!v.checkSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </div>
+    </aura:if-->
+    
+    
+    <aura:if isTrue="{!or(v.fieldName=='Name')}">
+        <a href="{! $Site.CurrentSiteUrl+'/'+(v.obj.ParentId!= null?'servlet/servlet.FileDownload?file='+v.recordId:v.recordId)}" target="_blank">{!v.fieldValue}</a>
+        <aura:set attribute="else">
+            <aura:if isTrue="{!or(v.fieldName=='Button_Class__c')}">
+                 <aura:if isTrue="{!or(v.fieldValue=='blue')}">
+                    No past History
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!or(v.fieldValue=='redButton')}">
+                            <lightning:button variant="brand" label="Active Assignments" title="New" onclick="{!c.openModal}" class="{!v.fieldValue}"></lightning:button>
+                            <aura:set attribute="else">
+                                
+                                <lightning:button variant="brand" label="Past Assignments" title="New" onclick="{!c.openModal}" class="{!v.fieldValue}"></lightning:button>  
+                            </aura:set>
+                        </aura:if>
+                        
+                    </aura:set>
+                </aura:if>
+                
+              
+                <!--lightning:button name='No' label='View Assignments' onclick='{!c.openModal}'/-->
+                <aura:set attribute="else">
+                    {!v.fieldValue}
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showModal}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{!c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate">Assignment Details</h2>
+                </header>
+                <div class="slds-scrollable--y" >
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">ASSIGNMENT NAME</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">COMPANY</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">ASSIGNMENT START DATE</div>
+                                </th>     
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">ASSIGNMENT STATUS</div>
+                                </th> 
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">CANDIDATE STATUS</div>
+                                </th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.AssDetails}" var="cc" >
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r}">
+                                            <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Mandate__c/'+cc.Mandate__c+'/view'}">
+                                                {!cc.Mandate__r.Name}
+                                            </a>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">
+                                            {!cc.Mandate__r.Company_Name_French__c}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">
+                                            {!cc.Mandate__r.Mandate_Start_Date__c }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            {!cc.Mandate__r.Assignment_Status__c}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            {!cc.Status_Summary_Line__c}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>   
+                        </tbody>
+                    </table>
+                    <footer class="slds-modal__footer border" >
+                        <lightning:button class="slds-button slds-button_brand" name='CLOSE,' label='CLOSE' onclick='{!c.closeModel}'/>
+                    </footer>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+</aura:component>

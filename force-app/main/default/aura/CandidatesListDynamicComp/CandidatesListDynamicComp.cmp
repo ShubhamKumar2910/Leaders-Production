@@ -1,0 +1,146 @@
+<aura:component controller="CandidatesListDynamicCompHelper" implements="force:hasRecordId">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="recordList" type="List" required="true"/>
+    <aura:attribute name="isSelectAll" type="Boolean" default="true"/>
+    <aura:attribute name="mandateRecId" type="String" />
+    
+    <aura:attribute name="showAssignmentHistory" type="Boolean" default="false"/>
+    <aura:attribute name="assignmentList" type="List" />
+    <aura:attribute name="showModal" type="Boolean" default="false"/>
+    <aura:attribute name="candidateHasOtherAssignment" type="List"  />
+    
+    <div class="slds-m-around_xx-large">
+        <h1 class="slds-text-heading--medium">Candidates</h1>
+        <br/>
+        <!--Contact List Table-->
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">
+            <thead>
+                <tr class="slds-text-title--caps">
+                    <th>
+                        <label class="slds-checkbox">
+                            <ui:inputCheckbox value="{!v.isSelectAll}" change="{!c.selectAll}" aura:id="selectAll"/>
+                            <span class="slds-checkbox--faux" />
+                            <span class="slds-form-element__label"></span>
+                        </label>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Candidate Assigned">Candidate Assigned</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">Name</div>
+                    </th>
+                    <aura:if isTrue="{!v.showAssignmentHistory}">
+                        <th scope="col">
+                            <div class="slds-truncate" title="Assignments">Assignments</div>
+                        </th>
+                    </aura:if>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:if isTrue="{!!empty(v.recordList)}">
+                    <aura:iteration var="appRec" items="{!v.recordList}" >
+                        <tr>
+                            <td>
+                                <label class="slds-checkbox">
+                                    <ui:inputCheckbox aura:id="checkContact" value="{!appRec.isSelected}" />
+                                    <span class="slds-checkbox&#45;&#45;faux" />
+                                    <span class="slds-form-element__label"></span>
+                                </label>
+                            </td>
+                            <td><ui:outputText value="{!appRec.Name}"/></td>
+                            <td><ui:outputText value="{!appRec.Contact__r.Name}"/></td>
+                            <aura:if isTrue="{!v.showAssignmentHistory}">
+                                <td>
+                                    <aura:if isTrue="{!appRec.Button_Class__c == 'redButton'}">
+                                        <lightning:button variant="brand" label="Active Assignment" value="{!appRec.Contact__r.Id}" onclick="{!c.openRelatedAssignment}" class="redButton" />
+                                        <aura:set attribute="else">
+                                            No Past History
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                </td>
+                            </aura:if>
+                        </tr>
+                    </aura:iteration>
+                </aura:if>
+                
+            </tbody>
+        </table>
+    </div>
+    <aura:if isTrue="{!v.showModal}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{!c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_large slds-hyphenate">Assignment Details</h2>
+                </header>
+                <div class="slds-scrollable--y" >
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">ASSIGNMENT NAME</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Assignment">COMPANY</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">ASSIGNMENT START DATE</div>
+                                </th>     
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">ASSIGNMENT STATUS</div>
+                                </th> 
+                                <th scope="col">
+                                    <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">CANDIDATE STATUS</div>
+                                </th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.assignmentList}" var="cc" >
+                                <tr class="slds-hint-parent">
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r}">
+                                            <a href="{!$Site.CurrentSiteUrl+'/lightning/r/Mandate__c/'+cc.Mandate__c+'/view'}">
+                                                {!cc.Mandate__r.Name}
+                                            </a>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">
+                                            {!cc.Mandate__r.Company_Name_French__c}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.CompanyName}">
+                                            {!cc.Mandate__r.Mandate_Start_Date__c }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            {!cc.Mandate__r.Assignment_Status__c}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slds-truncate slds-cell-wrap" title="{!cc.Mandate__r.Name}">
+                                            {!cc.Contact__r.Status_Summary_Line__c}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </aura:iteration>   
+                        </tbody>
+                    </table>
+                    <footer class="slds-modal__footer border" >
+                        <lightning:button class="slds-button slds-button_brand" name='CLOSE,' label='CLOSE' onclick='{!c.closeModel}'/>
+                    </footer>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

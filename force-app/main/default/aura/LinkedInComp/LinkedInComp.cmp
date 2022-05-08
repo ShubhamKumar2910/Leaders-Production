@@ -1,0 +1,373 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="addFileComponentController" >
+    <aura:attribute name="mandateRecId" type="String" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <ltng:require scripts="{!$Resource.VME_SweetAlert}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"></aura:handler>
+    
+    <aura:attribute name="LinkedIn" type="boolean" />
+    <aura:attribute name="showDirect" type="boolean" />
+    <aura:attribute name="showAll" type="boolean" />
+    <aura:attribute name="numberEmail" type="boolean" />
+    <aura:attribute name="showCompany" type="boolean" />
+    <aura:attribute name="showTitle" type="Boolean" />
+   
+    <aura:attribute name="showphone" type="boolean" />
+    <aura:attribute name="showLinkedInUpload" type="Boolean" />
+    <aura:attribute name="origin" type="boolean" />
+    <aura:attribute name="location" type="boolean" />
+    <aura:attribute name="boardDirector" type="boolean" />
+    
+    <aura:attribute name="otherFileName" type="String" default=""/>
+    <aura:attribute name="AssLang" type="String" />
+    <aura:attribute name="ContactName" type= "String" default=""/>
+    <aura:attribute name="CurentCompany" type= "String" default=""/>
+    <aura:attribute name="CurentTitle" type= "String" default=""/>
+    <aura:attribute name="CurentTitleFr" type= "String" default=""/>
+    <aura:attribute name="Direct" type= "String" default=""/>
+    <aura:attribute type="List"    name="currentList" default="[]" />
+    <aura:attribute type="List"    name="boardDirectorList" default="[]" />
+    <aura:attribute type="List"    name="updatedBoardList" default="[]" />
+    <aura:attribute name="linkedinUrl" type= "String" default=""/>
+    <aura:attribute name="Email" type= "String" default=""/>
+    <aura:attribute name="OriginValue" type= "String" default=""/>
+    <aura:attribute name="StateValue" type= "String" default=""/>
+    <aura:attribute name="CityValue" type= "String" default=""/>
+    <aura:attribute name="Phone" type= "String" default=""/>
+    
+    <aura:attribute name="candidateOrigin" type="List" default="[]"/>
+    <aura:attribute name="candidateLocationState" type="List" default="[]"/>
+    <aura:attribute name="candidateLocationCity" type="String" default=""/>
+    <aura:attribute name="originSelected" type="string" default=""/>
+    <aura:attribute name="stateSelected" type="string" default="" />
+    <aura:attribute name="applicationId" type="string" default="" />
+    
+    <lightning:card>   
+        <div class="slds-m-around-large">
+            <aura:if isTrue="{!v.showLinkedInUpload}">
+                <aura:if isTrue="{!v.LinkedIn}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Linked in Search</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                <lightning:button  variant="neutral" label="Google Search" onclick="{!c.googleSearch}" />
+                                <br/> <br/>
+                                Paste The URL Here
+                                <lightning:input type="text" label = "LinkedInURL"    value="{!v.linkedinUrl}" disabled=""/>
+                                <br/> <br/>
+                                
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Linked In URL" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.showDirect}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Update Phone Number</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                
+                                Enter The Updated Phone Number
+                                <lightning:input type="text" label = "Direct"    value="{!v.Direct}" disabled=""/>
+                                <br/> <br/>
+                                
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Phone" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.showphone}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Update Direct Number</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                
+                                Enter The Updated Direct Number
+                                <lightning:input type="text" label = "Direct Number"    value="{!v.Phone}" disabled=""/>
+                                <br/> <br/>
+                                
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Phone" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.showTitle}">
+                    
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Update Title</h2>
+                            </div>
+                            
+                            <div class="slds-modal__content slds-p-around--medium">
+                                
+                                <aura:if isTrue="{!v.AssLang == 'English'}">
+                                    Enter The Updated Title
+                                    <lightning:input type="text" label = "Curent Title" value="{!v.CurentTitle}" disabled=""/>
+                                    
+                                    <aura:set attribute="else">
+                                        Enter The Updated French Title
+                                        <lightning:input type="text" label = "Curent Title" value="{!v.CurentTitleFr}" disabled=""/>
+                                    </aura:set>
+                                    <br/> <br/>
+                                </aura:if>
+                                
+                            </div>
+                           
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Title" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                
+                <aura:if isTrue="{!v.numberEmail}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Update Email</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                Enter The Updated Email
+                                <lightning:input type="text" label = "Email "  value="{!v.Email}" disabled=""/>
+                                <br/> <br/>
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Email" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.origin}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Update Origin</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                Enter The Updated Origin 
+                                <lightning:select name="select" label="Select Origin" required="true" onchange ="{!c.updateorigin}" value="{!v.OriginValue}">
+                                    <option value="">{!v.originSelected}</option>
+                                    <aura:iteration items="{!v.candidateOrigin}" var="or">
+                                        <option value="{!or}" text="{!or}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+                                <br/> <br/>
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Origin" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.location}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Update Location</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                Enter The Updated Location State
+                                <lightning:select name="select" label="Select State" required="true" onchange ="{!c.updateLocation}" value="{!v.StateValue}">
+                                    <option value="">{!v.stateSelected}</option>
+                                    <aura:iteration items="{!v.candidateLocationState}" var="st">
+                                        <option value="{!st}" text="{!st}"></option>
+                                    </aura:iteration>
+                                </lightning:select>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                Enter The Updated Location City
+                                <lightning:input type="text" label = "City"  value="{!v.candidateLocationCity}" disabled=""/>
+                                <br/>
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:36%">
+                                    <lightning:button  variant="Success" label="Update Location" onclick="{!c.UpdateLinkedIn}" />
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.boardDirector}">
+                    <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+                        <div class="slds-modal__container">
+                            <aura:if isTrue="{!v.showLoadingSpinner}">
+                                <div class="exampleHolder">
+                                    <lightning:spinner alternativeText="Loading" size="small" />
+                                </div>
+                            </aura:if>
+                            <div class="slds-modal__header">
+                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                    X
+                                    <span class="slds-assistive-text">Close</span>
+                                </button>
+                                <h2 id="header99" class="slds-text-heading--medium">Director of Board</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-no-row-hover slds-table_cell-buffer">
+                                    <thead>
+                                        <tr class="slds-text-title_caps">
+                                            <th scope="col">
+                                                <div class="slds-truncate slds-cell-wrap" title="Assignment">Assignment Name</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes">Candidate Name</div>
+                                            </th>  
+                                            <th scope="col">
+                                                <div class="slds-truncate slds-cell-wrap" title=" Company">Company</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate slds-cell-wrap" title="Status Summary Line">Assignment Status</div>
+                                            </th> 
+                                            <th scope="col">
+                                                <div class="slds-truncate slds-cell-wrap" title="Leaders Reports Notes"> Remove </div>
+                                            </th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:if isTrue="{!not(empty(v.boardDirectorList))}">
+                                            <aura:iteration items="{!v.boardDirectorList}" var="app" indexVar="rowIndex">
+                                                <tr >
+                                                    <td class = "slds-truncate slds-cell-wrap">
+                                                        {!app.Mandate__r.Name}
+                                                    </td>
+                                                    <td class = "slds-truncate slds-cell-wrap">
+                                                        {!app.Contact__r.Name}
+                                                    </td>
+                                                    <td class = "slds-truncate slds-cell-wrap">
+                                                        {!app.Mandate__r.Company__r.Name}
+                                                    </td>
+                                                    <td class = "slds-truncate slds-cell-wrap">
+                                                        {!app.Status_Of_Ass__c}
+                                                    </td>
+                                                    <td>
+                                                        <lightning:button  value="{!app.Id}"  variant="destructive-text" label="Remove" onclick="{!c.removeBoardMemberApp}" />
+                                                    </td>
+                                                </tr>
+                                            </aura:iteration>
+                                            <aura:set attribute="else">
+                                                <p style="margin-left:65%">No Related Assignment</p>
+                                            </aura:set>
+                                        </aura:if> 
+                                        
+                                    </tbody>
+                                </table>
+                                <br/> <br/>
+                            </div>
+                            <div class="slds-modal__footer">
+                                <div style="margin-right:45%">
+                                    <lightning:button  variant="brand" label="Cancel" onclick="{!c.closeModel}" />
+                                    <lightning:button  variant="brand" label="Save" onclick="{!c.updateBoardDirectorList}" />
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>  
+                    </div>
+                </aura:if>
+                
+                <div class="slds-backdrop slds-backdrop--open"></div> 
+            </aura:if>
+        </div>
+    </lightning:card>
+</aura:component>
